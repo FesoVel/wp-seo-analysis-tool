@@ -7,8 +7,9 @@ function sat_analyze_keyword() {
         wp_send_json_error(array('message' => 'Forbidden'), 403);
     }
     check_ajax_referer('sat_analyze', 'nonce');
-    $keyword = sanitize_text_field($_POST['keyword']);
-    $post_type = sanitize_text_field($_POST['post_type']);
+    $keyword  = isset($_POST['keyword']) ? sanitize_text_field( wp_unslash( $_POST['keyword'] ) ) : '';
+    $post_type = isset($_POST['post_type']) ? sanitize_text_field( wp_unslash( $_POST['post_type'] ) ) : 'post';
+
     $page = isset($_POST['page']) ? max(0, intval($_POST['page'])) : 0;
     $per_page = isset($_POST['per_page']) ? max(1, min(1000, intval($_POST['per_page']))) : 500;
     

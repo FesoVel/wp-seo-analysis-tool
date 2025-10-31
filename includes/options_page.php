@@ -17,11 +17,11 @@ function sat_render_options_page() {
     $post_types = array_diff($post_types, ['attachment']);
     ?>
     <div class="sat-wrap">
-        <h1><?php _e('Site-wide SEO Content Analysis', 'wp-seo-analysis-tool'); ?></h1>
-        <p><?php _e('Analyze published content by post type. View word counts, keyword matches, and per-post keyword density. Select a post type, enter a focus keyword, and start the analysis.', 'wp-seo-analysis-tool'); ?></p>
+        <h1><?php esc_html_e('Site-wide SEO Content Analysis', 'wp-seo-analysis-tool'); ?></h1>
+        <p><?php esc_html_e('Analyze published content by post type. View word counts, keyword matches, and per-post keyword density. Select a post type, enter a focus keyword, and start the analysis.', 'wp-seo-analysis-tool'); ?></p>
         <form id="sat-keyword-form">
             <?php wp_nonce_field('sat_analyze', 'nonce'); ?>
-            <h4><?php _e('Select a post type:', 'wp-seo-analysis-tool') ?></h4>
+            <h4><?php esc_html_e('Select a post type:', 'wp-seo-analysis-tool') ?></h4>
             <?php foreach ($post_types as $post_type) : 
                 $counts = wp_count_posts($post_type);
                 $count = isset($counts->publish) ? (int) $counts->publish : 0;
@@ -32,9 +32,9 @@ function sat_render_options_page() {
                 </label>
             <?php endforeach; ?>
             <br>
-            <h4><label for="keyword"><?php _e('Enter Keyword:', 'wp-seo-analysis-tool') ?></label></h4>
+            <h4><label for="keyword"><?php esc_html_e('Enter Keyword:', 'wp-seo-analysis-tool') ?></label></h4>
             <input type="text" id="keyword" name="keyword" required>
-            <button type="submit">Analyze</button>
+            <button type="submit"><?php esc_html_e('Analyze', 'wp-seo-analysis-tool'); ?></button>
         </form>
         <table id="sat-analysis-results" class="stripe"></table>
     </div>
@@ -91,7 +91,7 @@ function sat_render_options_page() {
                 function fetchBatch() {
                     updateLoader();
                     $.ajax({
-                        url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                        url: '<?php echo esc_url( admin_url('admin-ajax.php') ); ?>',
                         type: 'POST',
                         dataType: 'json',
                         data: {

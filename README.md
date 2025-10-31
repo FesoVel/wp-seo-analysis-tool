@@ -14,7 +14,7 @@ Analyze published content by post type for word counts, keyword matches, and per
 ## Notes
 - Processes posts in batches to avoid memory spikes/timeouts
 - AJAX requests require admin capability and nonce verification
-- All user-facing strings are translatable (`wp-seo-analysis-tool`)
+- All user-facing strings are translatable (`seo-analysis-tool`)
 
 ## License
 See LICENSE.
