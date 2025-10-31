@@ -43,7 +43,12 @@ function sat_render_options_page() {
                 e.preventDefault();
                 var keyword = $('#keyword').val();
                 var postType = $('input[name="post_type"]:checked').val();
-                
+                var page = 0;
+                var perPage = 500; // batch size
+                var total = 0;
+                var processed = 0;
+                var tableInstance = null;
+
                 var loader = $('<div id="loader">Analyzing...</div>').css({
                     'position': 'fixed',
                     'top': '50%',
@@ -55,37 +60,70 @@ function sat_render_options_page() {
                     'z-index': '1000'
                 }).appendTo('body');
 
-                $.ajax({
-                    url: '<?php echo admin_url('admin-ajax.php'); ?>',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'sat_analyze_keyword',
-                        keyword: keyword,
-                        post_type: postType,
-                    },
-                    success: function(response) {
-                        var data = response;
-                        
-                        $('#sat-analysis-results').DataTable({
-                            columns: [
-                                { title: 'Post Title' },
-                                { title: 'Word Count' },
-                                { title: 'Keyword Count' },
-                                { title: 'Keyword Density' },
-                            ],
-                            data: data,
-                            stateSave: true,
-                            bDestroy: true
-                        });
-                    },
-                    error: function() {
-                        $('#sat-analysis-results').html('An error occurred. Please try again.');
-                    },
-                    complete: function() {
-                        loader.remove();
+                function updateLoader() {
+                    if (total > 0) {
+                        loader.text('Analyzing... ' + processed + ' / ' + total);
+                    } else {
+                        loader.text('Analyzing...');
                     }
-                });
+                }
+
+                function ensureTable() {
+                    if (tableInstance) { return tableInstance; }
+                    tableInstance = $('#sat-analysis-results').DataTable({
+                        columns: [
+                            { title: 'Post Title' },
+                            { title: 'Word Count' },
+                            { title: 'Keyword Count' },
+                            { title: 'Keyword Density' },
+                        ],
+                        data: [],
+                        stateSave: true,
+                        bDestroy: true,
+                        deferRender: true,
+                    });
+                    return tableInstance;
+                }
+
+                function fetchBatch() {
+                    updateLoader();
+                    $.ajax({
+                        url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'sat_analyze_keyword',
+                            keyword: keyword,
+                            post_type: postType,
+                            page: page,
+                            per_page: perPage
+                        },
+                        success: function(response) {
+                            var meta = response.meta || {};
+                            total = meta.total || total;
+                            processed = meta.processed || processed;
+                            var rows = response.rows || [];
+
+                            var dt = ensureTable();
+                            if (rows.length) {
+                                dt.rows.add(rows).draw(false);
+                            }
+
+                            if (meta.has_more) {
+                                page += 1;
+                                fetchBatch();
+                            } else {
+                                loader.remove();
+                            }
+                        },
+                        error: function() {
+                            $('#sat-analysis-results').html('An error occurred. Please try again.');
+                            loader.remove();
+                        }
+                    });
+                }
+
+                fetchBatch();
             });
         });
     </script>

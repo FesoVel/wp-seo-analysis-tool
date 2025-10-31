@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: SEO Analysis Tool
- * Description: Analyze published posts for word count and keyword density, with frontend display and REST API support.
- * Version: 1.0.0
+ * Description: Analyze published content for word count and keyword density, with frontend display and REST API support.
+ * Version: 1.1.0
  * Author: Viktor Veljanovski
  * Text Domain: wp-post-analysis-tool
  */
