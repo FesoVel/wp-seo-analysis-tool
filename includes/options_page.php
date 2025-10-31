@@ -16,10 +16,10 @@ function sat_render_options_page() {
     $post_types = array_diff($post_types, ['attachment']);
     ?>
     <div class="sat-wrap">
-        <h1><?php _e('SEO Content Analysis', 'wp-post-analysis-tool'); ?></h1>
-        <p><?php _e('Scan all post types content for word count and keyword density.'); ?></p>
+        <h1><?php _e('Site-wide SEO Content Analysis', 'wp-post-analysis-tool'); ?></h1>
+        <p><?php _e('Analyze published content by post type. View word counts, keyword matches, and per-post keyword density. Select a post type, enter a focus keyword, and start the analysis.', 'wp-post-analysis-tool'); ?></p>
         <form id="sat-keyword-form">
-            <h4><?php _e('Select post type:') ?></h4>
+            <h4><?php _e('Select a post type:', 'wp-post-analysis-tool') ?></h4>
             <?php foreach ($post_types as $post_type) : 
                 $counts = wp_count_posts($post_type);
                 $count = isset($counts->publish) ? (int) $counts->publish : 0;
