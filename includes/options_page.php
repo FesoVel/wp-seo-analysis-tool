@@ -12,8 +12,6 @@ function sat_add_options_page() {
 }
 
 function sat_render_options_page() {
-    $posts = get_posts('post_type=post&suppress_filters=0&posts_per_page=-1');
-    $post_count = count($posts);
     $post_types = get_post_types( array( 'public'   => true, ), 'names');
     $post_types = array_diff($post_types, ['attachment']);
     ?>
@@ -23,7 +21,8 @@ function sat_render_options_page() {
         <form id="sat-keyword-form">
             <h4><?php _e('Select post type:') ?></h4>
             <?php foreach ($post_types as $post_type) : 
-                $count = count( get_posts('post_type='.$post_type.'&suppress_filters=0&posts_per_page=-1') );
+                $counts = wp_count_posts($post_type);
+                $count = isset($counts->publish) ? (int) $counts->publish : 0;
                 ?>
                 <label for="sat_<?= $post_type; ?>">
                     <input type="radio" id="sat_<?= $post_type; ?>" name="post_type" value="<?= $post_type; ?>" required>
@@ -59,16 +58,16 @@ function sat_render_options_page() {
                 $.ajax({
                     url: '<?php echo admin_url('admin-ajax.php'); ?>',
                     type: 'POST',
+                    dataType: 'json',
                     data: {
                         action: 'sat_analyze_keyword',
                         keyword: keyword,
                         post_type: postType,
                     },
                     success: function(response) {
-                        var response = JSON.parse(response);
                         var data = response;
                         
-                        new DataTable('#sat-analysis-results', {
+                        $('#sat-analysis-results').DataTable({
                             columns: [
                                 { title: 'Post Title' },
                                 { title: 'Word Count' },
@@ -77,7 +76,7 @@ function sat_render_options_page() {
                             ],
                             data: data,
                             stateSave: true,
-                            "bDestroy": true
+                            bDestroy: true
                         });
                     },
                     error: function() {
