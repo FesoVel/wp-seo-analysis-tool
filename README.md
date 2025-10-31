@@ -1,34 +1,20 @@
 # SEO Analysis Tool
 
-## Overview
-A plugin the analyses the content of the site for word count, keywords and keyword density. It works with all available public custom post types on the site.
+Analyze published content by post type for word counts, keyword matches, and per-post keyword density. Designed for large sites with batched server-side processing and a responsive admin UI.
 
 ## Manual Installation
-To manually install the plugin directly into your WP installation follow these steps:
-1. Navigate into your plugins folder: ````mysite/wp-content/plugins````.
-2. Create a folder named ````seo-analysis-tool````.
-3. Download this repository into the newly created folder. The correct path should be: ````wp-content/plugins/seo-analysis-tool/````.
-After following these steps, you should be able to see the SEO Analysis Tool in your WordPress plugins. Click on ````activate```` to activate the plugin.
-
-## Install with .zip file
-1. Create a folder named ````seo-analysis-tool````.
-2. Download this repository inside the newly created folder.
-3. Compress the ````seo-analysis-tool```` folder into a .zip file.
-4. From your WP Dashboard navigate to ````Plugins````->````Add New Plugin```` and click on ````Upload Plugin````.
-5. Select the newly generated .zip file and click on ````Install Now````.
-5. After the plugin has been installed, click on ````Activate Plugin```` to activate the plugin.
-
+1. Upload the folder to `wp-content/plugins/wp-seo-analysis-tool/`.
+2. Activate the plugin via Plugins in WP Admin.
 
 ## Usage
-To use the plugin, follow these steps:
-1. From the menu in your WP Dashboard navigate to ````Tools```` -> ````SEO Keyword Analysis````.
-2. Choose the desired post type to do the analysis for.
-3. Enter the keyword you wish to do the analysis for.
-4. Click on ````Analyze````.
-You will then see the results of your analysis within a searchable, sortable and filterable table.
+1. Go to Tools → SEO Keyword Analysis
+2. Select a post type and enter a focus keyword
+3. Click Analyze to populate the table
+
+## Notes
+- Processes posts in batches to avoid memory spikes/timeouts
+- AJAX requests require admin capability and nonce verification
+- All user-facing strings are translatable (`wp-seo-analysis-tool`)
 
 ## License
-This plugin is licensed under the [Open Source Initiative](https://opensource.org/licenses) approved license. You can use, modify, and distribute this plugin freely. See the LICENSE file for more details.
-
-## Contribution
-Contributions are welcome!
+See LICENSE.

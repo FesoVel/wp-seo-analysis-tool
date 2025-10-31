@@ -1,7 +1,12 @@
 <?php
+defined('ABSPATH') || exit;
 // Add AJAX action for logged-in users
 add_action('wp_ajax_sat_analyze_keyword', 'sat_analyze_keyword');
 function sat_analyze_keyword() {
+    if ( ! current_user_can('manage_options') ) {
+        wp_send_json_error(array('message' => 'Forbidden'), 403);
+    }
+    check_ajax_referer('sat_analyze', 'nonce');
     $keyword = sanitize_text_field($_POST['keyword']);
     $post_type = sanitize_text_field($_POST['post_type']);
     $page = isset($_POST['page']) ? max(0, intval($_POST['page'])) : 0;

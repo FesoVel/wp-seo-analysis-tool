@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 
 add_action('admin_menu', 'sat_add_options_page');
 function sat_add_options_page() {
@@ -16,21 +17,22 @@ function sat_render_options_page() {
     $post_types = array_diff($post_types, ['attachment']);
     ?>
     <div class="sat-wrap">
-        <h1><?php _e('Site-wide SEO Content Analysis', 'wp-post-analysis-tool'); ?></h1>
-        <p><?php _e('Analyze published content by post type. View word counts, keyword matches, and per-post keyword density. Select a post type, enter a focus keyword, and start the analysis.', 'wp-post-analysis-tool'); ?></p>
+        <h1><?php _e('Site-wide SEO Content Analysis', 'wp-seo-analysis-tool'); ?></h1>
+        <p><?php _e('Analyze published content by post type. View word counts, keyword matches, and per-post keyword density. Select a post type, enter a focus keyword, and start the analysis.', 'wp-seo-analysis-tool'); ?></p>
         <form id="sat-keyword-form">
-            <h4><?php _e('Select a post type:', 'wp-post-analysis-tool') ?></h4>
+            <?php wp_nonce_field('sat_analyze', 'nonce'); ?>
+            <h4><?php _e('Select a post type:', 'wp-seo-analysis-tool') ?></h4>
             <?php foreach ($post_types as $post_type) : 
                 $counts = wp_count_posts($post_type);
                 $count = isset($counts->publish) ? (int) $counts->publish : 0;
                 ?>
-                <label for="sat_<?= $post_type; ?>">
-                    <input type="radio" id="sat_<?= $post_type; ?>" name="post_type" value="<?= $post_type; ?>" required>
-                    <?= $post_type; ?> (<?= $count ?>)
+                <label for="sat_<?php echo esc_attr($post_type); ?>">
+                    <input type="radio" id="sat_<?php echo esc_attr($post_type); ?>" name="post_type" value="<?php echo esc_attr($post_type); ?>" required>
+                    <?php echo esc_html($post_type); ?> (<?php echo esc_html((string)$count); ?>)
                 </label>
             <?php endforeach; ?>
             <br>
-            <h4><label for="keyword"><?php _e('Enter Keyword:') ?></label></h4>
+            <h4><label for="keyword"><?php _e('Enter Keyword:', 'wp-seo-analysis-tool') ?></label></h4>
             <input type="text" id="keyword" name="keyword" required>
             <button type="submit">Analyze</button>
         </form>
@@ -45,6 +47,7 @@ function sat_render_options_page() {
                 var postType = $('input[name="post_type"]:checked').val();
                 var page = 0;
                 var perPage = 500; // batch size
+                var nonce = $('#sat-keyword-form input[name="nonce"]').val();
                 var total = 0;
                 var processed = 0;
                 var tableInstance = null;
@@ -97,6 +100,7 @@ function sat_render_options_page() {
                             post_type: postType,
                             page: page,
                             per_page: perPage
+                            ,nonce: nonce
                         },
                         success: function(response) {
                             var meta = response.meta || {};
